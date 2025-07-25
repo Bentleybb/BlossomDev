@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Add this import
 import {
@@ -28,6 +29,21 @@ const ProductCheckout = () => {
   const { cartItems } = useCart();
 
   console.log("Cart items in Checkout:", cartItems);
+=======
+import React from "react";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import { useTheme } from "@mui/material/styles";
+import Button from "@mui/material/Button";
+import { useCart } from "./CartContext"; 
+
+const ProductCheckout = () => {
+  const theme = useTheme();
+  const { cartItems } = useCart();
+
+   console.log("Cart items in Checkout:", cartItems);
+>>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
 
   // Group cart items by productId + size + color
   const groupedItems = cartItems.reduce((acc, item) => {
@@ -47,6 +63,7 @@ const ProductCheckout = () => {
     0
   );
 
+<<<<<<< HEAD
   const [values, setValues] = useState({
     paymentInfo: {
       nameOnCard: "",
@@ -153,11 +170,28 @@ const ProductCheckout = () => {
           mb: 4,
           textAlign: 'center',
           fontWeight: 'bold'
+=======
+  return (
+    <Card
+      sx={{
+        maxWidth: 900,
+        margin: "auto",
+        mt: 5,
+        p: 3,
+      }}
+    >
+      <Typography
+        variant="h6"
+        sx={{
+          color: theme.custom?.openTitle || theme.palette.primary.main,
+          mb: 2,
+>>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
         }}
       >
         Checkout
       </Typography>
 
+<<<<<<< HEAD
       {groupedArray.length === 0 ? (
         <Paper elevation={2} sx={{ p: 4, textAlign: 'center' }}>
           <Typography variant="h6" color="text.secondary">
@@ -424,6 +458,43 @@ const ProductCheckout = () => {
         </Grid>
       )}
     </Container>
+=======
+      <CardContent>
+        {groupedArray.length === 0 ? (
+          <Typography variant="body1">No items in cart.</Typography>
+        ) : (
+          <>
+            {groupedArray.map((item, index) => (
+              <div key={index} style={{ marginBottom: 15 }}>
+                <Typography variant="subtitle1">{item.name}</Typography>
+                <Typography variant="body2">Size: {item.size}</Typography>
+                <Typography variant="body2">Color: {item.color}</Typography>
+                <Typography variant="body2">
+                  Price: ${item.price.toFixed(2)} x {item.quantity}
+                </Typography>
+                <Typography variant="body2">
+                  Subtotal: ${(item.price * item.quantity).toFixed(2)}
+                </Typography>
+              </div>
+            ))}
+
+            <Typography variant="h6" sx={{ mt: 2 }}>
+              Total: ${total.toFixed(2)}
+            </Typography>
+
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ mt: 2 }}
+              onClick={() => alert("Order placed!")}
+            >
+              Place Order
+            </Button>
+          </>
+        )}
+      </CardContent>
+    </Card>
+>>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
   );
 };
 

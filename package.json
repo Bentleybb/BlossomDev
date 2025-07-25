@@ -10,7 +10,10 @@
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-react": "^7.27.1",
     "babel-loader": "^10.0.0",
+<<<<<<< HEAD
     "eslint-plugin-react": "^7.37.5",
+=======
+>>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
     "nodemon": "^3.1.10"
   },
   "scripts": {

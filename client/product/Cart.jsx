@@ -1,4 +1,5 @@
 import React from "react";
+<<<<<<< HEAD
 import {
   Card,
   CardContent,
@@ -22,10 +23,20 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+=======
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import { useTheme } from "@mui/material/styles";
+import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "./CartContext"; // <-- Import the context
+>>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
 
 const ProductCart = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+<<<<<<< HEAD
   const { cartItems, removeFromCart, updateQuantity } = useCart();
 
   // Group items by productId + size + color
@@ -328,6 +339,56 @@ const ProductCart = () => {
         </Grid>
       )}
     </Container>
+=======
+  const { cartItems } = useCart(); // <-- Access cart items from context
+
+  return (
+    <Card
+      sx={{
+        maxWidth: 900,
+        margin: "auto",
+        mt: 5,
+        p: 2,
+      }}
+    >
+      <Typography
+        variant="h6"
+        sx={{
+          color: theme.custom?.openTitle || theme.palette.primary.main,
+          mb: 2,
+        }}
+      >
+        Items in Cart
+      </Typography>
+
+      <CardContent>
+        {cartItems.length === 0 ? (
+          <Typography variant="body1">Your cart is empty.</Typography>
+        ) : (
+          cartItems.map((item, index) => (
+            <div key={index} style={{ borderBottom: "1px solid #ccc", paddingBottom: 10, marginBottom: 10 }}>
+              <Typography variant="subtitle1">{item.name}</Typography>
+              <Typography variant="body2">Size: {item.size}</Typography>
+              <Typography variant="body2">Color: {item.color}</Typography>
+              <Typography variant="body2">Price: ${item.price.toFixed(2)}</Typography>
+              {item.image && (
+                <img src={item.image} alt={item.name} width="80" style={{ marginTop: 6 }} />
+              )}
+            </div>
+          ))
+        )}
+
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mt: 2 }}
+          onClick={() => navigate("/checkout")}
+        >
+          Checkout
+        </Button>
+      </CardContent>
+    </Card>
+>>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
   );
 };
 

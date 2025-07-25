@@ -1,15 +1,22 @@
 import React from "react";
+<<<<<<< HEAD
 import { Typography, Box, Button } from "@mui/material";
+=======
+import { Typography, Box } from "@mui/material";
+>>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
 import { useTheme } from "@mui/material/styles";
 import DesignImage from "./../assets/images/design1.png"; 
 import design from "./../assets/images/design.png";
 import Footer from "../components/Footer";
 import Menu from "../components/Menu";
 import NavbarCategory from "../components/NavbarCategory";
+<<<<<<< HEAD
 import products from "../product/productData"; // Add this import at the top
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { Link } from "react-router-dom";
+=======
+>>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
 
 const Home = () => {
   const theme = useTheme();
@@ -48,6 +55,7 @@ const Home = () => {
             </Typography>
 
         </Box>
+<<<<<<< HEAD
 
         {/* Featured Products */}
         <Box sx={{ mt: 4, mb: 6 }}>
@@ -89,6 +97,8 @@ const Home = () => {
             </Button>
           </Link>
         </Box>
+=======
+>>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
       </Box>
 
       {/* Footer */}
