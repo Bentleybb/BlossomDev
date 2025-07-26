@@ -21,7 +21,7 @@ import Button from "@mui/material/Button";
 
 export default function Profile() {
   const location = useLocation();
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   const [redirectToSignin, setRedirectToSignin] = useState(false);
   const jwt = auth.isAuthenticated();
   const { userId } = useParams();
@@ -29,21 +29,44 @@ export default function Profile() {
   useEffect(() => {
     const abortController = new AbortController();
     const signal = abortController.signal;
-
-    read({ userId }, { t: jwt.token }, signal).then((data) => {
-      if (data && data.error) {
-        setRedirectToSignin(true);
-      } else {
-        setUser(data);
+  
+    const fetchUser = async () => {
+      try {
+        const data = await read({ userId }, { t: jwt.token }, signal);
+        if (data && data.error) {
+          setRedirectToSignin(true);
+        } else {
+          setUser(data);
+        }
+      } catch (err) {
+        if (err.name === "AbortError") {
+          // Expected: component unmounted before fetch completed
+          console.log("Fetch aborted");
+        } else {
+          console.error("Fetch user error:", err);
+        }
       }
-    });
-
+    };
+  
+    fetchUser();
+  
     return () => abortController.abort();
   }, [userId]);
 
   if (redirectToSignin) {
     return (
       <Navigate to="/signin" state={{ from: location.pathname }} replace />
+    );
+  }
+
+  if (!user) {
+    return (
+      <Paper
+        elevation={4}
+        sx={{ maxWidth: 600, mx: "auto", mt: 5, p: 3 }}
+      >
+        <Typography variant="h6">Loading profile...</Typography>
+      </Paper>
     );
   }
 
@@ -73,9 +96,15 @@ export default function Profile() {
               <PersonIcon />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary={user.name} secondary={user.email} />
+          <ListItemText
+            primary={user?.name || "Name not available"}
+            secondary={user?.email || "Email not available"}
+          />
+
           {auth.isAuthenticated().user &&
-            auth.isAuthenticated().user._id === user._id && (
+            user &&
+            auth.isAuthenticated().user._id === user._id
+             && (
               <ListItemSecondaryAction>
                 <Link to={`/user/edit/${user._id}`}>
                   <IconButton aria-label="Edit" color="primary">

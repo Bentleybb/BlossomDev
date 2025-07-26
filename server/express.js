@@ -4,45 +4,32 @@ import cookieParser from "cookie-parser";
 import compress from "compression";
 import cors from "cors";
 import helmet from "helmet";
-<<<<<<< HEAD
 
+// Route imports
 import userRoutes from "./routes/user.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import checkoutRoutes from "./routes/checkout.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
 
-
 const app = express();
 
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-=======
-import userRoutes from "./routes/user.routes.js";
-import authRoutes from "./routes/auth.routes.js";
-
-
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use("/", userRoutes);
-app.use("/", authRoutes);
->>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(compress());
 app.use(helmet());
 app.use(cors());
-<<<<<<< HEAD
 
+// Route handlers
 app.use("/", userRoutes);
 app.use("/", authRoutes);
 app.use("/api/checkout", checkoutRoutes);
 app.use("/api/contact", contactRoutes);
 
-
-=======
->>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
+// Error handling
 app.use((err, req, res, next) => {
   if (err.name === "UnauthorizedError") {
     res.status(401).json({ error: err.name + ": " + err.message });
@@ -51,9 +38,5 @@ app.use((err, req, res, next) => {
     console.log(err);
   }
 });
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
 export default app;
