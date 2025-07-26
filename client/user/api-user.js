@@ -32,49 +32,60 @@ const create = async (user) => {
   }
 };
 
-const list = async (signal) => {
+const list = async (credentials) => {
   try {
-    const response = await fetch(API_BASE, {
+    const response = await fetch("/api/users", {
       method: "GET",
-      signal,
-    });
-    return await handleResponse(response);
-  } catch (err) {
-    return handleError(err);
-  }
-};
-
-const read = async ({ userId }, { t }, signal) => {
-  try {
-    const response = await fetch(`${API_BASE}/${userId}`, {
-      method: "GET",
-      signal,
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${t}`,
+        Authorization: `Bearer ${credentials.t}`, // ✅ include token
       },
     });
-    return await handleResponse(response);
+    return await response.json();
   } catch (err) {
-    return handleError(err);
+    console.error(err);
   }
 };
 
-const update = async ({ userId }, { t }, user) => {
+const read = async (params, credentials, signal) => {
   try {
-    const response = await fetch(`${API_BASE}/${userId}`, {
+    const response = await fetch(`/api/users/${params.userId}`, {
+      method: "GET",
+      signal: signal,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${credentials.t}`,
+      },
+    });
+
+    return await response.json();
+  } catch (err) {
+    if (err.name === "AbortError") {
+      // Silently handle aborts to avoid unhandled promise rejection
+      console.log("Fetch aborted");
+      return;
+    }
+    console.error("API call failed:", err);
+    throw err; // re-throw other errors
+  }
+};
+
+const update = async (params, credentials, user) => {
+  try {
+    let response = await fetch(`/api/users/${params.userId}`, {
       method: "PUT",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${t}`,
+        Authorization: "Bearer " + credentials.t,
       },
       body: JSON.stringify(user),
     });
-    return await handleResponse(response);
+    return await response.json();
   } catch (err) {
-    return handleError(err);
+    console.error("API call failed:", err);
   }
 };
 

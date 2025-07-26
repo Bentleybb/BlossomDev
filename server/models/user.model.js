@@ -26,6 +26,11 @@ const UserSchema = new mongoose.Schema({
     required: "Password is required",
   },
   salt: String,
+  role: {
+    type: String,
+    default: "user",
+    enum: ["user", "admin"],
+  },
 });
 UserSchema.virtual("password")
   .set(function (password) {

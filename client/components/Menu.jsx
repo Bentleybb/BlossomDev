@@ -47,12 +47,10 @@ export default function Menu() {
         <Link to="/Cart">
           <Button sx={{ color: isActive(location, "/Cart") }}>Cart</Button>
         </Link>
-<<<<<<< HEAD
         <Link to="/Contact">
           <Button sx={{ color: isActive(location, "/Contact") }}>Contact</Button>
         </Link>
-=======
->>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
+
 
         {!auth.isAuthenticated() && (
           <Link to="/Signin">
@@ -63,19 +61,30 @@ export default function Menu() {
         )}
 
         {auth.isAuthenticated() && (
-          <Link to={`/user/${auth.isAuthenticated().user._id}`}>
-            <Button
-              sx={{
-                color: isActive(
-                  location,
-                  `/user/${auth.isAuthenticated().user._id}`
-                ),
-              }}
-            >
-              Profile
-            </Button>
-          </Link>
+          <>
+            <Link to={`/user/${auth.isAuthenticated().user._id}`}>
+              <Button
+                sx={{
+                  color: isActive(
+                    location,
+                    `/user/${auth.isAuthenticated().user._id}`
+                  ),
+                }}
+              >
+                Profile
+              </Button>
+            </Link>
+
+            {/* ✅ Only show for admin */}
+            {(auth.isAuthenticated().user.email === "liontuzi@gmail.com" ||
+              auth.isAuthenticated().user.role === "admin") && (
+                <Link to="/users">
+                  <Button sx={{ color: isActive(location, "/users") }}>Users</Button>
+                </Link>              
+            )}
+          </>
         )}
+
       </Toolbar>
     </AppBar>
   );
