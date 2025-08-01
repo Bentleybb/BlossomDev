@@ -1,97 +1,83 @@
-
-const API_BASE = "/api/users";
-
-const handleResponse = async (response) => {
+const create = async (params, credentials, user) => {
   try {
-    const data = await response.json();
-    return data;
-  } catch (err) {
-    console.error("Failed to parse response JSON:", err);
-    throw err;
-  }
-};
-
-const handleError = (err) => {
-  console.error("API call failed:", err);
-  throw err;
-};
-
-const create = async (user) => {
-  try {
-    const response = await fetch(API_BASE, {
+    let response = await fetch("/api/users/by/" + params.userId, {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Authorization: "Bearer " + credentials.t,
       },
       body: JSON.stringify(user),
     });
-    return await handleResponse(response);
+    return await response.json();
   } catch (err) {
-    return handleError(err);
+    console.log(err);
   }
 };
 
-const list = async (signal) => {
+const read = async (params, credentials, signal) => {
   try {
-    const response = await fetch(API_BASE, {
+    let response = await fetch("/api/users/" + params.userId, {
       method: "GET",
-      signal,
-    });
-    return await handleResponse(response);
-  } catch (err) {
-    return handleError(err);
-  }
-};
-
-const read = async ({ userId }, { t }, signal) => {
-  try {
-    const response = await fetch(`${API_BASE}/${userId}`, {
-      method: "GET",
-      signal,
+      signal: signal,
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${t}`,
+        Authorization: "Bearer " + credentials.t,
       },
     });
-    return await handleResponse(response);
+    return await response.json();
   } catch (err) {
-    return handleError(err);
+    console.log(err);
   }
 };
 
-const update = async ({ userId }, { t }, user) => {
+const update = async (params, credentials, user) => {
   try {
-    const response = await fetch(`${API_BASE}/${userId}`, {
+    let response = await fetch("/api/users/" + params.userId, {
       method: "PUT",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${t}`,
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(user),
     });
-    return await handleResponse(response);
+    return await response.json();
   } catch (err) {
-    return handleError(err);
+    console.log(err);
   }
 };
 
-const remove = async ({ userId }, { t }) => {
+const remove = async (params, credentials) => {
   try {
-    const response = await fetch(`${API_BASE}/${userId}`, {
+    let response = await fetch("/api/users/" + params.userId, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${t}`,
+        Authorization: "Bearer " + credentials.t,
       },
     });
-    return await handleResponse(response);
+    return await response.json();
   } catch (err) {
-    return handleError(err);
+    console.log(err);
   }
 };
 
-export { create, list, read, update, remove };
+const adminListUsers = async (credentials, signal) => {
+  try {
+    let response = await fetch("/api/users", {
+      method: "GET",
+      signal: signal,
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + credentials.t,
+      },
+    });
+    return await response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export { create, read, update, remove, adminListUsers as list};

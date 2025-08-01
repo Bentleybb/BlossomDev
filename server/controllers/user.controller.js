@@ -1,6 +1,28 @@
 import User from "../models/user.model.js";
 import extend from "lodash/extend.js";
 import errorHandler from "./error.controller.js";
+
+const hasAuthorization = (req, res, next) => {
+  const isSameUser = req.profile && req.auth && req.profile._id == req.auth._id;
+  const isAdmin = req.auth && req.auth.role === "admin";
+
+  if (!isSameUser && !isAdmin) {
+    return res.status(403).json({
+      error: "User is not authorized"
+    });
+  }
+  next();
+};
+
+const isAdmin = (req, res, next) => {
+  if (!req.auth || req.auth.role !== "admin") {
+    return res.status(403).json({
+      error: "Admin only access"
+    });
+  }
+  next();
+};
+ 
 const create = async (req, res) => {
   const user = new User(req.body);
   try {
@@ -47,7 +69,7 @@ const read = (req, res) => {
 const update = async (req, res) => {
   try {
     let user = req.profile;
-    user = extend(user, req.body);
+    user = Object.assign(user, req.body);
     user.updated = Date.now();
     await user.save();
     user.hashed_password = undefined;
@@ -55,7 +77,7 @@ const update = async (req, res) => {
     res.json(user);
   } catch (err) {
     return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
+      error: "Unauthorized or update failed",
     });
   }
 };
@@ -72,4 +94,14 @@ const remove = async (req, res) => {
     });
   }
 };
-export default { create, userByID, read, list, remove, update };
+export default {
+  create,
+  userByID,
+  read,
+  list,
+  remove,
+  update,
+  hasAuthorization,
+  isAdmin
+};
+

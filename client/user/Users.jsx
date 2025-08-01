@@ -1,72 +1,75 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { list, update } from "./api-user.js"; // Add update
+import auth from "../lib/auth-helper.js";
+import { Navigate } from "react-router-dom";
 import {
-  Paper,
   List,
   ListItem,
-  ListItemAvatar,
   ListItemText,
   ListItemSecondaryAction,
-  IconButton,
-  Avatar,
+  Button,
   Typography,
-  Link,
+  Paper,
 } from "@mui/material";
-import ArrowForward from "@mui/icons-material/ArrowForward";
-import { list } from "./api-user.js";
-import { Link as RouterLink } from "react-router-dom";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
+  const [redirectToHome, setRedirectToHome] = useState(false);
+  const jwt = auth.isAuthenticated();
 
   useEffect(() => {
-    const abortController = new AbortController();
-    const signal = abortController.signal;
-
-    list(signal).then((data) => {
-      if (data?.error) {
-        console.log(data.error);
-      } else {
-        setUsers(data);
-      }
-    });
-
-    return () => abortController.abort();
+    if (!jwt || jwt.user.role !== "admin") {
+      setRedirectToHome(true);
+    } else {
+      list({ t: jwt.token }).then((data) => {
+        if (data && !data.error) setUsers(data);
+      });
+    }
   }, []);
 
+  const handleRoleToggle = async (user) => {
+    const newRole = user.role === "admin" ? "user" : "admin";
+    const updatedUser = { ...user, role: newRole };
+
+    try {
+      const response = await update(
+        { userId: user._id },
+        { t: jwt.token },
+        updatedUser
+      );
+      if (!response.error) {
+        setUsers(users.map((u) => (u._id === user._id ? response : u)));
+      }
+    } catch (err) {
+      console.error("Role change failed:", err);
+    }
+  };
+
+  if (redirectToHome) return <Navigate to="/" replace />;
+
   return (
-    <Paper
-      elevation={4}
-      sx={{
-        maxWidth: 600,
-        mx: "auto",
-        mt: 5,
-        p: 3,
-      }}
-    >
-      <Typography variant="h6" sx={{ mb: 2, color: "text.primary" }}>
-        All Users
+    <Paper sx={{ maxWidth: 600, mx: "auto", mt: 5, p: 3 }}>
+      <Typography variant="h6" sx={{ mb: 2 }}>
+        All Users (Admin Only)
       </Typography>
-      <List dense>
-        {users.map((item, i) => (
-          <Link
-            component={RouterLink}
-            to={`/user/${item._id}`}
-            underline="none"
-            key={item._id}
-            sx={{ color: "inherit" }}
-          >
-            <ListItem button>
-              <ListItemAvatar>
-                <Avatar />
-              </ListItemAvatar>
-              <ListItemText primary={item.name} />
-              <ListItemSecondaryAction>
-                <IconButton edge="end">
-                  <ArrowForward />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          </Link>
+      <List>
+        {users.map((user) => (
+          <ListItem key={user._id} divider>
+            <ListItemText
+              primary={`${user.name} (${user.role})`}
+              secondary={user.email}
+            />
+            <ListItemSecondaryAction>
+              {user._id !== jwt.user._id && (
+                <Button
+                  variant="outlined"
+                  onClick={() => handleRoleToggle(user)}
+                >
+                  Make {user.role === "admin" ? "User" : "Admin"}
+                </Button>
+              )}
+            </ListItemSecondaryAction>
+          </ListItem>
         ))}
       </List>
     </Paper>

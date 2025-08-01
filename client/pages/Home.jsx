@@ -1,42 +1,30 @@
 import React from "react";
-<<<<<<< HEAD
 import { Typography, Box, Button } from "@mui/material";
-=======
-import { Typography, Box } from "@mui/material";
->>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
 import { useTheme } from "@mui/material/styles";
-import DesignImage from "./../assets/images/design1.png"; 
+import DesignImage from "./../assets/images/design1.png";
 import design from "./../assets/images/design.png";
 import Footer from "../components/Footer";
 import Menu from "../components/Menu";
 import NavbarCategory from "../components/NavbarCategory";
-<<<<<<< HEAD
-import products from "../product/productData"; // Add this import at the top
+import products from "../product/productData"; // Imported product data
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { Link } from "react-router-dom";
-=======
->>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
 
 const Home = () => {
   const theme = useTheme();
 
-  return (  
+  return (
     <div>
-
-      {/* Main Content */}
       <Box sx={{ maxWidth: 1000, margin: "auto", p: 3 }}>
-        
         {/* Banner Image */}
-        <img 
+        <img
           src={DesignImage}
           alt="How we design our products"
           style={{ width: "100%", borderRadius: "10px", marginBottom: "30px" }}
         />
 
-        
-
-        {/* Image left - Text right (same row) */}
+        {/* Image left - Text right */}
         <Box
           sx={{
             display: "flex",
@@ -48,14 +36,11 @@ const Home = () => {
           }}
         >
           <Typography variant="body1" sx={{ lineHeight: 1.7 }}>
-              Welcome to <strong>Blossom Co.</strong> — your go-to store for stylish men's fashion. 
-              We offer quality clothing with modern design, perfect for any occasion. 
-              Our curated collection includes T-shirts, pants, jackets, shoes, and more. 
-              Every piece is chosen to help you express confidence, comfort, and personal style.
-            </Typography>
-
+            Welcome to <strong>Blossom Co.</strong> — your go-to store for stylish men's fashion.
+            We offer quality clothing with modern design, perfect for any occasion. Our curated collection includes T-shirts, pants, jackets, shoes, and more.
+            Every piece is chosen to help you express confidence, comfort, and personal style.
+          </Typography>
         </Box>
-<<<<<<< HEAD
 
         {/* Featured Products */}
         <Box sx={{ mt: 4, mb: 6 }}>
@@ -91,17 +76,14 @@ const Home = () => {
 
         {/* View All Products Button */}
         <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-          <Link to="/Products" style={{ textDecoration: "none" }}>
+          <Link to="/products" style={{ textDecoration: "none" }}>
             <Button variant="contained" color="primary">
               View All Products
             </Button>
           </Link>
         </Box>
-=======
->>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
       </Box>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

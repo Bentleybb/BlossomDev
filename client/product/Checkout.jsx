@@ -1,18 +1,11 @@
-<<<<<<< HEAD
+// ProductCheckout.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Add this import
+import { useNavigate } from "react-router-dom";
 import {
   Card,
-  CardContent,
   Typography,
   Button,
   TextField,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  CardActions,
   Grid,
   Box,
   Divider,
@@ -25,27 +18,9 @@ import { createOrder } from "./api-checkout";
 
 const ProductCheckout = () => {
   const theme = useTheme();
-  const navigate = useNavigate(); // Add this line
+  const navigate = useNavigate();
   const { cartItems } = useCart();
 
-  console.log("Cart items in Checkout:", cartItems);
-=======
-import React from "react";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import { useTheme } from "@mui/material/styles";
-import Button from "@mui/material/Button";
-import { useCart } from "./CartContext"; 
-
-const ProductCheckout = () => {
-  const theme = useTheme();
-  const { cartItems } = useCart();
-
-   console.log("Cart items in Checkout:", cartItems);
->>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
-
-  // Group cart items by productId + size + color
   const groupedItems = cartItems.reduce((acc, item) => {
     const key = `${item.id}-${item.size}-${item.color}`;
     if (!acc[key]) {
@@ -55,15 +30,12 @@ const ProductCheckout = () => {
     }
     return acc;
   }, {});
-
   const groupedArray = Object.values(groupedItems);
-
   const total = groupedArray.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
-<<<<<<< HEAD
   const [values, setValues] = useState({
     paymentInfo: {
       nameOnCard: "",
@@ -95,50 +67,24 @@ const ProductCheckout = () => {
 
   const validateForm = () => {
     const { paymentInfo, shippingInfo } = values;
-    
-    // Check if all required fields are filled
     const requiredPaymentFields = ['nameOnCard', 'cardNumber', 'expirationDate', 'cvv'];
     const requiredShippingFields = ['firstName', 'lastName', 'address', 'phoneNumber', 'city', 'province', 'postalCode'];
-    
-    for (let field of requiredPaymentFields) {
-      if (!paymentInfo[field]) {
-        return `Please fill in ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`;
-      }
+    for (let field of [...requiredPaymentFields, ...requiredShippingFields]) {
+      const value = field in paymentInfo ? paymentInfo[field] : shippingInfo[field];
+      if (!value) return `Please fill in ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`;
     }
-    
-    for (let field of requiredShippingFields) {
-      if (!shippingInfo[field]) {
-        return `Please fill in ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`;
-      }
-    }
-    
-    // Basic card number validation (just check if it's 16 digits)
-    if (!/^\d{16}$/.test(paymentInfo.cardNumber.replace(/\s/g, ''))) {
-      return "Please enter a valid 16-digit card number";
-    }
-    
-    // Basic expiration date validation (MM/YY format)
-    if (!/^\d{2}\/\d{2}$/.test(paymentInfo.expirationDate)) {
-      return "Please enter expiration date in MM/YY format";
-    }
-    
-    // CVV validation (3-4 digits)
-    if (!/^\d{3,4}$/.test(paymentInfo.cvv)) {
-      return "Please enter a valid CVV (3-4 digits)";
-    }
-    
+    if (!/^\d{16}$/.test(paymentInfo.cardNumber.replace(/\s/g, ''))) return "Please enter a valid 16-digit card number";
+    if (!/^\d{2}\/\d{2}$/.test(paymentInfo.expirationDate)) return "Please enter expiration date in MM/YY format";
+    if (!/^\d{3,4}$/.test(paymentInfo.cvv)) return "Please enter a valid CVV (3-4 digits)";
     return null;
   };
 
   const clickSubmit = () => {
-    // Validate form
     const validationError = validateForm();
     if (validationError) {
       setValues({ ...values, error: validationError });
       return;
     }
-
-    setValues({ ...values, error: "" });
 
     const order = {
       items: groupedArray,
@@ -152,46 +98,18 @@ const ProductCheckout = () => {
       if (data.error) {
         setValues({ ...values, error: data.error });
       } else {
-        // Redirect to confirmation page
         navigate("/confirmation");
-        // Optionally clear cart here
-        // clearCart();
+        // Optional: clearCart();
       }
     });
   };
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography
-        variant="h4"
-        component="h1"
-        sx={{
-          color: theme.palette.primary.main,
-          mb: 4,
-          textAlign: 'center',
-          fontWeight: 'bold'
-=======
-  return (
-    <Card
-      sx={{
-        maxWidth: 900,
-        margin: "auto",
-        mt: 5,
-        p: 3,
-      }}
-    >
-      <Typography
-        variant="h6"
-        sx={{
-          color: theme.custom?.openTitle || theme.palette.primary.main,
-          mb: 2,
->>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
-        }}
-      >
+      <Typography variant="h4" sx={{ textAlign: "center", fontWeight: "bold", mb: 4 }}>
         Checkout
       </Typography>
 
-<<<<<<< HEAD
       {groupedArray.length === 0 ? (
         <Paper elevation={2} sx={{ p: 4, textAlign: 'center' }}>
           <Typography variant="h6" color="text.secondary">
@@ -203,298 +121,98 @@ const ProductCheckout = () => {
         </Paper>
       ) : (
         <Grid container spacing={4}>
-          {/* Order Summary Section */}
+          {/* Order Summary */}
           <Grid item xs={12} md={5}>
-            <Paper elevation={2} sx={{ p: 3, height: 'fit-content', position: 'sticky', top: 20 }}>
-              <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>
-                Order Summary
-              </Typography>
-              
-              <Box sx={{ mb: 3 }}>
-                {groupedArray.map((item, index) => (
-                  <Box key={index} sx={{ mb: 2, pb: 2, borderBottom: index < groupedArray.length - 1 ? 1 : 0, borderColor: 'divider' }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                      {item.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Size: {item.size} • Color: {item.color}
-                    </Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-                      <Typography variant="body2">
-                        ${item.price.toFixed(2)} × {item.quantity}
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                        ${(item.price * item.quantity).toFixed(2)}
-                      </Typography>
-                    </Box>
-                  </Box>
-                ))}
-              </Box>
-
-              <Divider sx={{ my: 2 }} />
-              
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                <Typography variant="body1">Subtotal:</Typography>
-                <Typography variant="body1">${total.toFixed(2)}</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                <Typography variant="body1">Shipping:</Typography>
-                <Typography variant="body1">Free</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                <Typography variant="body1">Tax:</Typography>
-                <Typography variant="body1">${(total * 0.13).toFixed(2)}</Typography>
-              </Box>
-              
-              <Divider sx={{ my: 2 }} />
-              
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                  Total:
-                </Typography>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-                  ${(total * 1.13).toFixed(2)}
-                </Typography>
-              </Box>
+            <Paper elevation={2} sx={{ p: 3 }}>
+              <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>Order Summary</Typography>
+              {groupedArray.map((item, index) => (
+                <Box key={index} sx={{ mb: 2 }}>
+                  <Typography variant="subtitle1">{item.name}</Typography>
+                  <Typography variant="body2">Size: {item.size} • Color: {item.color}</Typography>
+                  <Typography variant="body2">
+                    ${item.price.toFixed(2)} × {item.quantity}
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                    ${(item.price * item.quantity).toFixed(2)}
+                  </Typography>
+                  <Divider sx={{ my: 1 }} />
+                </Box>
+              ))}
+              <Typography variant="h6">Total: ${(total * 1.13).toFixed(2)} (incl. tax)</Typography>
             </Paper>
           </Grid>
 
-          {/* Form Section */}
+          {/* Payment + Shipping Forms */}
           <Grid item xs={12} md={7}>
             <Paper elevation={2} sx={{ p: 4 }}>
-              {/* Payment Information Section */}
-              <Box sx={{ mb: 4 }}>
-                <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
-                  Payment Information
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                  Enter your payment details to complete the purchase
-                </Typography>
-                
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <TextField
-                      id="nameOnCard"
-                      label="Name on Card"
-                      value={values.paymentInfo.nameOnCard}
-                      onChange={handleChange("paymentInfo", "nameOnCard")}
-                      fullWidth
-                      required
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      id="cardNumber"
-                      label="Card Number"
-                      value={values.paymentInfo.cardNumber}
-                      onChange={handleChange("paymentInfo", "cardNumber")}
-                      placeholder="1234 5678 9012 3456"
-                      fullWidth
-                      required
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      id="expirationDate"
-                      label="Expiry Date"
-                      value={values.paymentInfo.expirationDate}
-                      onChange={handleChange("paymentInfo", "expirationDate")}
-                      placeholder="MM/YY"
-                      fullWidth
-                      required
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      id="cvv"
-                      label="CVV"
-                      value={values.paymentInfo.cvv}
-                      onChange={handleChange("paymentInfo", "cvv")}
-                      placeholder="123"
-                      fullWidth
-                      required
-                      variant="outlined"
-                    />
-                  </Grid>
+              {/* Payment Info */}
+              <Typography variant="h5" sx={{ mb: 2 }}>Payment Information</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField fullWidth label="Name on Card" value={values.paymentInfo.nameOnCard}
+                    onChange={handleChange("paymentInfo", "nameOnCard")} required />
                 </Grid>
-              </Box>
+                <Grid item xs={12}>
+                  <TextField fullWidth label="Card Number" value={values.paymentInfo.cardNumber}
+                    onChange={handleChange("paymentInfo", "cardNumber")} placeholder="1234 5678 9012 3456" required />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField fullWidth label="Expiry (MM/YY)" value={values.paymentInfo.expirationDate}
+                    onChange={handleChange("paymentInfo", "expirationDate")} placeholder="MM/YY" required />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField fullWidth label="CVV" value={values.paymentInfo.cvv}
+                    onChange={handleChange("paymentInfo", "cvv")} placeholder="123" required />
+                </Grid>
+              </Grid>
 
               <Divider sx={{ my: 4 }} />
 
-              {/* Shipping Information Section */}
-              <Box sx={{ mb: 4 }}>
-                <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
-                  Shipping Information
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                  Where should we deliver your order?
-                </Typography>
-                
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <TextField
-                      id="firstName"
-                      label="First Name"
-                      value={values.shippingInfo.firstName}
-                      onChange={handleChange("shippingInfo", "firstName")}
-                      fullWidth
-                      required
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      id="lastName"
-                      label="Last Name"
-                      value={values.shippingInfo.lastName}
-                      onChange={handleChange("shippingInfo", "lastName")}
-                      fullWidth
-                      required
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      id="address"
-                      label="Street Address"
-                      value={values.shippingInfo.address}
-                      onChange={handleChange("shippingInfo", "address")}
-                      fullWidth
-                      required
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      id="phoneNumber"
-                      label="Phone Number"
-                      value={values.shippingInfo.phoneNumber}
-                      onChange={handleChange("shippingInfo", "phoneNumber")}
-                      placeholder="+1 (555) 123-4567"
-                      fullWidth
-                      required
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={4}>
-                    <TextField
-                      id="city"
-                      label="City"
-                      value={values.shippingInfo.city}
-                      onChange={handleChange("shippingInfo", "city")}
-                      fullWidth
-                      required
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={4}>
-                    <TextField
-                      id="province"
-                      label="Province/State"
-                      value={values.shippingInfo.province}
-                      onChange={handleChange("shippingInfo", "province")}
-                      fullWidth
-                      required
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={4}>
-                    <TextField
-                      id="postalCode"
-                      label="Postal Code"
-                      value={values.shippingInfo.postalCode}
-                      onChange={handleChange("shippingInfo", "postalCode")}
-                      placeholder="A1A 1A1"
-                      fullWidth
-                      required
-                      variant="outlined"
-                    />
-                  </Grid>
+              {/* Shipping Info */}
+              <Typography variant="h5" sx={{ mb: 2 }}>Shipping Information</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <TextField fullWidth label="First Name" value={values.shippingInfo.firstName}
+                    onChange={handleChange("shippingInfo", "firstName")} required />
                 </Grid>
-              </Box>
+                <Grid item xs={6}>
+                  <TextField fullWidth label="Last Name" value={values.shippingInfo.lastName}
+                    onChange={handleChange("shippingInfo", "lastName")} required />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField fullWidth label="Street Address" value={values.shippingInfo.address}
+                    onChange={handleChange("shippingInfo", "address")} required />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField fullWidth label="Phone Number" value={values.shippingInfo.phoneNumber}
+                    onChange={handleChange("shippingInfo", "phoneNumber")} placeholder="+1 (555) 123-4567" required />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField fullWidth label="City" value={values.shippingInfo.city}
+                    onChange={handleChange("shippingInfo", "city")} required />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField fullWidth label="Province" value={values.shippingInfo.province}
+                    onChange={handleChange("shippingInfo", "province")} required />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField fullWidth label="Postal Code" value={values.shippingInfo.postalCode}
+                    onChange={handleChange("shippingInfo", "postalCode")} placeholder="A1A 1A1" required />
+                </Grid>
+              </Grid>
 
-              {/* Error Display */}
               {values.error && (
-                <Box sx={{ mb: 3 }}>
-                  <Typography color="error" variant="body1" sx={{ 
-                    backgroundColor: 'error.light', 
-                    color: 'error.contrastText',
-                    p: 2, 
-                    borderRadius: 1,
-                    fontWeight: 'medium'
-                  }}>
-                    {values.error}
-                  </Typography>
-                </Box>
+                <Typography color="error" sx={{ mt: 2 }}>{values.error}</Typography>
               )}
 
-              {/* Terms and Submit */}
-              <Box sx={{ mt: 4 }}>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  By placing this order, you agree to our terms and conditions and privacy policy.
-                </Typography>
-                
-                <Button
-                  color="primary"
-                  variant="contained"
-                  onClick={clickSubmit}
-                  size="large"
-                  fullWidth
-                  sx={{ 
-                    py: 1.5,
-                    fontSize: '1.1rem',
-                    fontWeight: 'bold',
-                    textTransform: 'none'
-                  }}
-                >
-                  Place Order • ${(total * 1.13).toFixed(2)}
-                </Button>
-              </Box>
+              <Button variant="contained" color="primary" fullWidth sx={{ mt: 4, py: 1.5 }} onClick={clickSubmit}>
+                Place Order • ${(total * 1.13).toFixed(2)}
+              </Button>
             </Paper>
           </Grid>
         </Grid>
       )}
     </Container>
-=======
-      <CardContent>
-        {groupedArray.length === 0 ? (
-          <Typography variant="body1">No items in cart.</Typography>
-        ) : (
-          <>
-            {groupedArray.map((item, index) => (
-              <div key={index} style={{ marginBottom: 15 }}>
-                <Typography variant="subtitle1">{item.name}</Typography>
-                <Typography variant="body2">Size: {item.size}</Typography>
-                <Typography variant="body2">Color: {item.color}</Typography>
-                <Typography variant="body2">
-                  Price: ${item.price.toFixed(2)} x {item.quantity}
-                </Typography>
-                <Typography variant="body2">
-                  Subtotal: ${(item.price * item.quantity).toFixed(2)}
-                </Typography>
-              </div>
-            ))}
-
-            <Typography variant="h6" sx={{ mt: 2 }}>
-              Total: ${total.toFixed(2)}
-            </Typography>
-
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ mt: 2 }}
-              onClick={() => alert("Order placed!")}
-            >
-              Place Order
-            </Button>
-          </>
-        )}
-      </CardContent>
-    </Card>
->>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
   );
 };
 

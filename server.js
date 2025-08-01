@@ -1,45 +1,33 @@
 import config from "./config/config.js";
 import app from "./server/express.js";
 import mongoose from "mongoose";
-<<<<<<< HEAD
 
+// Use global Promise
 mongoose.Promise = global.Promise;
 
+// Connect to MongoDB
 mongoose
   .connect(config.mongoUri, {
+    // Optional: remove if using default behavior
     // useNewUrlParser: true,
     // useCreateIndex: true,
-    // useUnifiedTopology: true,
-=======
-mongoose.Promise = global.Promise;
-mongoose
-  .connect(config.mongoUri, {
-    //useNewUrlParser: true,
-    //useCreateIndex: true,
-    //useUnifiedTopology: true
->>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
+    // useUnifiedTopology: true
   })
   .then(() => {
     console.log("Connected to the database!");
   });
-<<<<<<< HEAD
 
+// Handle DB connection error
 mongoose.connection.on("error", () => {
-  throw new Error(`unable to connect to database: ${config.mongoUri}`);
+  throw new Error(`Unable to connect to database: ${config.mongoUri}`);
 });
 
+// Test route (optional homepage)
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to User application." });
 });
 
-=======
-mongoose.connection.on("error", () => {
-  throw new Error(`unable to connect to database: ${config.mongoUri}`);
-});
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to User application." });
-});
->>>>>>> a2af5e548c88d9c7b9f97c32c6cb3190ab6ee1d9
+// Start server
 app.listen(config.port, (err) => {
   if (err) {
     console.log(err);
