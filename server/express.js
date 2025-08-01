@@ -5,6 +5,7 @@ import compress from "compression";
 import cors from "cors";
 import helmet from "helmet";
 import path from "path";
+import { fileURLToPath } from "url";
 
 // Route imports
 import userRoutes from "./routes/user.routes.js";
@@ -13,9 +14,14 @@ import checkoutRoutes from "./routes/checkout.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
 
 const app = express();
-const CURRENT_WORKING_DIR = process.cwd();
 
-// Middleware
+// ⬇️ Needed to get __dirname in ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ==========================
+// ✅ Middleware Setup
+// ==========================
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -25,13 +31,28 @@ app.use(compress());
 app.use(helmet());
 app.use(cors());
 
-// Route handlers
-app.use("/", userRoutes);
-app.use("/", authRoutes);
+// ==========================
+// ✅ API Routes
+// ==========================
+app.use("/api/users", userRoutes);         // Or use "/" if needed
+app.use("/api/auth", authRoutes);
 app.use("/api/checkout", checkoutRoutes);
 app.use("/api/contact", contactRoutes);
 
-// Error handling
+// ==========================
+// ✅ Serve Frontend React App
+// ==========================
+const frontendDist = path.join(__dirname, "../client/dist");
+app.use(express.static(frontendDist));
+
+// For React Router: fallback to index.html
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendDist, "index.html"));
+});
+
+// ==========================
+// ✅ Error Handling
+// ==========================
 app.use((err, req, res, next) => {
   if (err.name === "UnauthorizedError") {
     res.status(401).json({ error: err.name + ": " + err.message });
@@ -40,7 +61,5 @@ app.use((err, req, res, next) => {
     console.log(err);
   }
 });
-
-app.use(express.static(path.join(CURRENT_WORKING_DIR, "dist/app")));
 
 export default app;
