@@ -1,19 +1,26 @@
-const create = async (params, credentials, user) => {
+const create = async (user) => {
   try {
-    let response = await fetch("/api/users/by/" + params.userId, {
-      method: "POST",
+    const res = await fetch('/api/users', {
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + credentials.t,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(user),
     });
-    return await response.json();
+
+    if (!res.ok) {
+      const errorText = await res.text(); // Try reading text if JSON fails
+      throw new Error(`Signup failed: ${errorText}`);
+    }
+
+    return await res.json();
   } catch (err) {
-    console.log(err);
+    console.error('API error in create:', err.message);
+    return { error: err.message }; // return object with error to avoid undefined
   }
 };
+
 
 const read = async (params, credentials, signal) => {
   try {
