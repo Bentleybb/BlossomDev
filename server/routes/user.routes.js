@@ -10,10 +10,10 @@ router.route("/api/users")
   .get(authCtrl.requireSignin, authCtrl.isAdmin, userCtrl.list); // Only admin can list all users
 
 // Routes requiring authentication and authorization
-router.route("/api/users/:userId")
-  .get(authCtrl.requireSignin, userCtrl.hasAuthorization, userCtrl.read)
-  .put(authCtrl.requireSignin, userCtrl.hasAuthorization, userCtrl.update)
-  .delete(authCtrl.requireSignin, userCtrl.hasAuthorization, userCtrl.remove);
+router.route('/api/users/:userId')
+  .get(authCtrl.requireSignin, authCtrl.hasAuthorization, userCtrl.read)
+  .put(authCtrl.requireSignin, authCtrl.hasAuthorization, userCtrl.update)
+  .delete(authCtrl.requireSignin, authCtrl.isAdmin, userCtrl.remove);
 
 // Preload user by ID
 router.param("userId", userCtrl.userByID);
