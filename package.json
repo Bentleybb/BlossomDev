@@ -1,5 +1,5 @@
 {
-  "name": "mern_skeleton",
+  "name": "blossomdev",
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",
@@ -10,6 +10,7 @@
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-react": "^7.27.1",
     "babel-loader": "^10.0.0",
+    "concurrently": "^9.2.0",
     "eslint-plugin-react": "^7.37.5",
     "nodemon": "^3.1.10"
   },

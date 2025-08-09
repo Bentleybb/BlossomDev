@@ -4,18 +4,22 @@ import authCtrl from "../controllers/auth.controller.js";
 
 const router = express.Router();
 
-// Public routes
-router.route("/api/users")
+// TEMP: prove router is mounted correctly
+//router.post("/__ping", (req, res) => res.json({ ok: true }));
+
+// POST /api/users  |  GET /api/users (admin only)
+router
+  .route("/")
   .post(userCtrl.create)
-  .get(authCtrl.requireSignin, authCtrl.isAdmin, userCtrl.list); // Only admin can list all users
+  .get(authCtrl.requireSignin, authCtrl.isAdmin, userCtrl.list);
 
-// Routes requiring authentication and authorization
-router.route('/api/users/:userId')
-  .get(authCtrl.requireSignin, authCtrl.hasAuthorization, userCtrl.read)
-  .put(authCtrl.requireSignin, authCtrl.hasAuthorization, userCtrl.update)
-  .delete(authCtrl.requireSignin, authCtrl.isAdmin, userCtrl.remove);
-
-// Preload user by ID
+// /api/users/:userId
 router.param("userId", userCtrl.userByID);
+
+router
+  .route("/:userId")
+  .get(authCtrl.requireSignin, authCtrl.hasAuthorization, userCtrl.read)
+  .put(authCtrl.requireSignin, userCtrl.hasAuthorization, userCtrl.update)
+  .delete(authCtrl.requireSignin, authCtrl.isAdmin, userCtrl.remove);
 
 export default router;

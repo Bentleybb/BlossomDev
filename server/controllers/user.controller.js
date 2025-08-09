@@ -1,5 +1,4 @@
 import User from "../models/user.model.js";
-import extend from "lodash/extend.js";
 import errorHandler from "./error.controller.js";
 
 const hasAuthorization = (req, res, next) => {

@@ -1,20 +1,6 @@
 import config from "./config/config.js";
 import app from "./server/express.js";
 import mongoose from "mongoose";
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Serve frontend from the Vite build folder
-const __staticPath = path.resolve(__dirname, './client/dist');
-app.use(express.static(__staticPath));
-
-// Redirect all unmatched routes to index.html (for React Router)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__staticPath, 'index.html'));
-});
 
 // Use global Promise
 mongoose.Promise = global.Promise;
